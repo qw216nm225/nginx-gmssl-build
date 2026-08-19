@@ -76,8 +76,10 @@ jobs:
             ps aux | grep -c "[n]ginx"
             echo "PASS: TLCP 配置加载成功，nginx 已启动"
             echo "=== 自测 4/4：TLCP 国密握手（GmSSL tlcp_client）==="
+            /usr/local/bin/gmssl version || true
             echo | /usr/local/bin/gmssl tlcp_client -host 127.0.0.1 -port 8445 \
-              > /work/handshake.log 2>&1
+              > /work/handshake.log 2>&1 || true
+            echo "--- 握手输出 ---"
             cat /work/handshake.log
             if grep -q "Connection established" /work/handshake.log; then
               echo "PASS: TLCP 握手成功（GmSSL 客户端与 nginx-gmssl 互通）"
