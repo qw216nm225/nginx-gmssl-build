@@ -75,6 +75,17 @@ jobs:
             sleep 1
             ps aux | grep -c "[n]ginx"
             echo "PASS: TLCP 配置加载成功，nginx 已启动"
+            echo "=== 自测 4/4：TLCP 国密握手（GmSSL tlcp_client）==="
+            echo | /usr/local/bin/gmssl tlcp_client -host 127.0.0.1 -port 8445 \
+              > /work/handshake.log 2>&1
+            cat /work/handshake.log
+            if grep -q "Connection established" /work/handshake.log; then
+              echo "PASS: TLCP 握手成功（GmSSL 客户端与 nginx-gmssl 互通）"
+            else
+              echo "FAIL: TLCP 握手失败"
+              tail -20 /work/install/nginx/logs/tlcp-error.log
+              exit 1
+            fi
           '
 
       - name: Package artifact
