@@ -65,12 +65,16 @@ jobs:
             make install
 
             # ===== 自测：TLCP 双证书配置检查（GmSSL 按 KeyUsage 区分签名/加密证书）=====
-            echo "=== 自测 1/3：启用 TLCP 自测配置 ==="
+            echo "=== 自测 1/4：启用 TLCP 自测配置（官方测试证书替换自签证书）==="
+            # 用 nginx-gmssl 官方仓库自带的 GmSSL 生成测试证书（排除 OpenSSL 生成证书的兼容性干扰）
+            wget -q -O /work/test-certs/double_certs.pem https://raw.githubusercontent.com/GmSSL/nginx-gmssl/main/gmssl-tests/tlcp-certs/double_certs.pem
+            wget -q -O /work/test-certs/double_keys.pem https://raw.githubusercontent.com/GmSSL/nginx-gmssl/main/gmssl-tests/tlcp-certs/double_keys.pem
+            wget -q -O /work/test-certs/pass.txt https://raw.githubusercontent.com/GmSSL/nginx-gmssl/main/gmssl-tests/pass.txt
             cp /work/ci/tlcp-selfcheck.conf /work/install/nginx/conf/nginx.conf
             mkdir -p /work/install/nginx/logs
-            echo "=== 自测 2/3：nginx -t 配置检查 ==="
+            echo "=== 自测 2/4：nginx -t 配置检查 ==="
             /work/install/nginx/sbin/nginx -t -p /work/install/nginx
-            echo "=== 自测 3/3：启动并验证监听 ==="
+            echo "=== 自测 3/4：启动并验证监听 ==="
             /work/install/nginx/sbin/nginx -p /work/install/nginx
             sleep 1
             ps aux | grep -c "[n]ginx"
