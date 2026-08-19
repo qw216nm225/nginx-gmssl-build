@@ -70,6 +70,7 @@ gmssl tlcp_client -host localhost -port 8445 -cacert cacert.pem
 
 ## 注意事项
 
+- **已知上游 bug（重要）**：nginx-gmssl 当前版本 TLCP 握手会导致 worker 崩溃（客户端报 Connection reset by peer），官方测试证书/正式证书均复现，见 [GmSSL/nginx-gmssl issue #2](https://github.com/GmSSL/nginx-gmssl/issues/2)。流水线握手自测为软断言（WARN 不阻断构建）。**生产使用前需等待上游修复或换用 A 方案（Tengine + Tongsuo）**。官方 CI 目前也只做 `nginx -t` 不做握手，与本现象一致。
 - 产物动态依赖：`libgmssl`（rpath 已嵌入 /usr/local/lib）、`libpcre2-8`、`libz`——部署服务器需有对应库（编译容器内已装 /usr/local，服务器上如缺失需从产物包或系统源补齐）
 - nginx-gmssl 启动时校验编译期/运行期 GmSSL 版本一致，不可混用不同版本的 libgmssl
 - 本仓库测试证书为 localhost 自签，仅用于演练，勿用于生产
