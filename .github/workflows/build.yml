@@ -78,6 +78,7 @@ jobs:
             echo "=== 自测 4/4：TLCP 国密握手（GmSSL tlcp_client）==="
             /usr/local/bin/gmssl version || true
             echo | /usr/local/bin/gmssl tlcp_client -host 127.0.0.1 -port 8445 \
+              -cipher_suite TLS_ECC_SM4_CBC_SM3 \
               > /work/handshake.log 2>&1 || true
             echo "--- 握手输出 ---"
             cat /work/handshake.log
